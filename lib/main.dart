@@ -1,3 +1,4 @@
+import 'package:acoin_blockchain/slider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -34,8 +35,20 @@ class _MyHomePageState extends State<MyHomePage> {
   Client httpClient;
   Web3Client ethClient;
   bool data = false;
+  int amount = 0;
   final myAddress = "0x830748d372c6C6BEBb5BF122f6803f9868fe6c93";
 
+  @override
+  void initState(){
+    super.initState();
+    httpClient = Client();
+    ethClient = Web3Client('https://rinkeby.infura.io/v3/79a71b288cea4e2ea6e41389d8c7b46f', httpClient);
+    getBalance(myAddress);
+  }
+
+  Future<void> getBalance(String targetAddress) async{
+    EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +78,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 .make()
                 .p16(),
             30.heightBox,
+
+            SliderWidget(
+              min:0,
+              max:100,
+              finalVal: (val){
+                amount= (val*100).round();
+              },
+              ).centered(),
+
             HStack(
               [
                 FlatButton.icon(
