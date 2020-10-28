@@ -79,6 +79,34 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<String> submit(String functionName, List<dynamic> args)async{
+    EthPrivateKey credential =EthPrivateKey.fromHex("2d0b3dd23b10339a1791f4cdc82602029db757c031191bef9b0652474892a2b7");
+
+    DeployedContract contract = await loadContract();
+    final ethFunction = contract.function(functionName);
+    final result = await ethClient.sendTransaction(credential, Transaction.callContract(contract: contract, function: ethFunction, parameters: args),fetchChainIdFromNetworkId: true);
+
+    return result;
+  }
+
+  Future<String> depositBalance() async {
+    //EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+    var bigAmount = BigInt.from(amount);
+    var response = await submit("depositBalance",[bigAmount]);
+    print("Deposited");
+
+    return response;
+  }
+
+  Future<String> withdrawBalance() async {
+    //EthereumAddress address = EthereumAddress.fromHex(targetAddress);
+    var bigAmount = BigInt.from(amount);
+    var response = await submit("withdrawBalance",[bigAmount]);
+    print("Withdrawn");
+
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         label: "Refresh".text.white.make())
                     .h(50),
                 FlatButton.icon(
-                        onPressed: () {},
+                        onPressed: ()=>depositBalance(),
                         color: Colors.green,
                         shape: Vx.roundedSm,
                         icon:
@@ -133,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         label: "Deposit".text.white.make())
                     .h(50),
                 FlatButton.icon(
-                        onPressed: () {},
+                        onPressed: ()=>withdrawBalance(),
                         color: Colors.red,
                         shape: Vx.roundedSm,
                         icon: Icon(Icons.call_received, color: Colors.white),
